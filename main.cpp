@@ -25,6 +25,11 @@ void on_center_button() {
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::Motor left_wheel (10);
+	pros::Motor right_wheel (11);
+
+
+
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -58,7 +63,12 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	pros::Motor left_wheel (10);
+	pros::Motor right_wheel (11);
+
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -77,8 +87,12 @@ void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
 	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+	pros::Motor left_wheel (10);
+	pros::Motor right_wheel (11);
 
 
+
+	pros::lcd::set_text(1, "This is working");
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
@@ -86,9 +100,12 @@ void opcontrol() {
 
 		// Arcade control scheme
 		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
-		left_mg.move(dir - turn);                      // Sets left motor voltage
-		right_mg.move(dir + turn);                     // Sets right motor voltage
+		int turn = master.get_analog(ANALOG_LEFT_X);  // Gets the turn left/right from right joystick
+		left_wheel.move_voltage(dir);                      // Sets left motor voltage
+		right_wheel.move_voltage(turn);                     // Sets right motor voltage
 		pros::delay(20);                               // Run for 20 ms then update
+		
+			pros::lcd::set_text(1, "Loop");
+
 	}
 }
