@@ -81,10 +81,11 @@ void opcontrol() {
 
 	while (true) {
 
-
+	pros::lcd::initialize();
+	pros::lcd::set_text(1, "Hello PROS User!");
 		// Arcade control scheme
-		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_Left_X);  // Gets the turn left/right from right joystick
+		int dir = -1*master.get_analog(ANALOG_RIGHT_Y);    // Gets amount forward/backward from left joystick
+		int turn = master.get_analog(ANALOG_LEFT_Y);  // Gets the turn left/right from right joystick
 		left_wheel.move(turn);                      // Sets left motor voltage
 		right_wheel.move(dir);                     // Sets right motor voltage
 		pros::delay(20);                               // Run for 20 ms then update
