@@ -91,8 +91,8 @@ void opcontrol()
 		// Arcade control scheme
 		int power = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick                     // Sets right motor voltage
 		int turning = master.get_analog(ANALOG_RIGHT_X);
-		int right_train = power - turning;
-		int left_train = -1*( power + turning);
+		int right_train = power + turning;
+		int left_train = -1*( power - turning);
 		front_left.move((left_train));
 		back_left.move(left_train);
 		front_right.move(right_train);
