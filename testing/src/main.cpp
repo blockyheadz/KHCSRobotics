@@ -15,7 +15,7 @@ void on_center_button() {
 		pros::lcd::clear_line(2);
 	}
 }
-//jyjfj
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -73,14 +73,18 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor front_right(10);    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::Motor front_left(11);  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
-	pros::Motor back_left(20);
-	pros::Motor back_right(1);
 
-	while (true) {
+
+void opcontrol()
+ {
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::Motor front_right(10); 
+	pros::Motor front_left(1);  
+	pros::Motor back_left(11);
+	pros::Motor back_right(20);
+
+	while (true) 
+	{
 
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
@@ -88,8 +92,8 @@ void opcontrol() {
 		int power = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick                     // Sets right motor voltage
 		int turning = master.get_analog(ANALOG_RIGHT_X);
 		int right_train = power - turning;
-		int left_train =-1*( power + turning);
-		front_left.move(left_train);
+		int left_train = -1*( power + turning);
+		front_left.move((left_train));
 		back_left.move(left_train);
 		front_right.move(right_train);
 		back_right.move(right_train);
