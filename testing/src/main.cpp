@@ -75,19 +75,24 @@ void autonomous() {}
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor right_wheel(10);    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::Motor left_wheel(11);  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
-
+	pros::Motor front_right(10);    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+	pros::Motor front_left(11);  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+	pros::Motor back_left(20);
+	pros::Motor back_right(1);
 
 	while (true) {
 
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 		// Arcade control scheme
-		int dir = -1*master.get_analog(ANALOG_RIGHT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_LEFT_Y);  // Gets the turn left/right from right joystick
-		left_wheel.move(turn);                      // Sets left motor voltage
-		right_wheel.move(dir);                     // Sets right motor voltage
+		int power = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick                     // Sets right motor voltage
+		int turning = master.get_analog(ANALOG_RIGHT_X);
+		int right_train = power - turning;
+		int left_train =-1*( power + turning);
+		front_left.move(left_train);
+		back_left.move(left_train);
+		front_right.move(right_train);
+		back_right.move(right_train);
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }
