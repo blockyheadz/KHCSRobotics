@@ -87,7 +87,9 @@ void opcontrol()
 	{
 
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	char pos[] = "";
+	sprintf(pos,"%f",front_left.get_position());
+	pros::lcd::set_text(1,pos);
 		// Arcade control scheme
 		int power = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick                     // Sets right motor voltage
 		int turning = master.get_analog(ANALOG_RIGHT_X);
