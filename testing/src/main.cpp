@@ -84,10 +84,11 @@ void opcontrol()
 	pros::Motor leftWheel(6);
 	pros::Motor rightWheel(5);
 
-
 	while (true) 
 	{
-
+	int speed = master.get_analog(ANALOG_LEFT_Y);
+	leftWheel.move( -1 * speed);
+	rightWheel.move( speed);
 	pros::lcd::initialize();
 	char pos[] = "";
 	sprintf(pos,"%f",leftWheel.get_position());
