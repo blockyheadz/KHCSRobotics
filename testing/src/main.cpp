@@ -58,7 +58,10 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() 
+{
+	
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -78,27 +81,17 @@ void autonomous() {}
 void opcontrol()
  {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor front_right(10); 
-	pros::Motor front_left(1);  
-	pros::Motor back_left(11);
-	pros::Motor back_right(20);
+	pros::Motor leftWheel(6);
+	pros::Motor rightWheel(5);
+
 
 	while (true) 
 	{
 
 	pros::lcd::initialize();
 	char pos[] = "";
-	sprintf(pos,"%f",front_left.get_position());
+	sprintf(pos,"%f",leftWheel.get_position());
 	pros::lcd::set_text(1,pos);
-		// Arcade control scheme
-		int power = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick                     // Sets right motor voltage
-		int turning = master.get_analog(ANALOG_RIGHT_X);
-		int right_train = power + turning;
-		int left_train = -1*( power - turning);
-		front_left.move((left_train));
-		back_left.move(left_train);
-		front_right.move(right_train);
-		back_right.move(right_train);
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }
