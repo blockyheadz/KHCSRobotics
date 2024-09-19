@@ -81,7 +81,7 @@ void opcontrol()
 	pros::Motor front_right(10); 
 	pros::Motor front_left(1);  
 	pros::Motor back_left(11);
-	pros::Motor back_right(20);
+	pros::Motor back_right(0);
 
 	while (true) 
 	{
