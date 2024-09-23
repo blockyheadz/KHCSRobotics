@@ -90,8 +90,8 @@ void opcontrol()
 		leftWheel.move_absolute(inchToTick(10,18,3.25),10);
 		rightWheel.move_absolute(-1 * inchToTick(10,18,3.25),10);
 	}
-	return;
-	while (true) 
+
+	while(true)
 	{
 	int speed = master.get_analog(ANALOG_LEFT_Y);
 	leftWheel.move( -1 * speed);
@@ -100,6 +100,9 @@ void opcontrol()
 	char pos[] = "";
 	sprintf(pos,"%f",leftWheel.get_position());
 	pros::lcd::set_text(1,pos);
-		pros::delay(20);                               // Run for 20 ms then update
+	master.print(0,0,"%i",master.get_analog(ANALOG_LEFT_X));
+	pros::delay(20);                           // Run for 20 ms then update
 	}
 }
+
+
