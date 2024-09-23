@@ -76,6 +76,9 @@ void autonomous()
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+float inchToTick(float inch, float gearRatio, float wheelDia){
+	return inch*((50 * gearRatio)/( wheelDia * 3.14159));
+}
 
 
 void opcontrol()
@@ -83,6 +86,10 @@ void opcontrol()
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Motor leftWheel(6);
 	pros::Motor rightWheel(5);
+	while(leftWheel.get_position() < inchToTick(10,18,3.25)){
+		leftWheel.move_absolute(inchToTick(10,18,3.25),10);
+		rightWheel.move_absolute(inchToTick(10,18,3.25),10);
+	}
 
 	while (true) 
 	{
