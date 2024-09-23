@@ -88,9 +88,9 @@ void opcontrol()
 	pros::Motor rightWheel(5);
 	while(leftWheel.get_position() < inchToTick(10,18,3.25)){
 		leftWheel.move_absolute(inchToTick(10,18,3.25),10);
-		rightWheel.move_absolute(inchToTick(10,18,3.25),10);
+		rightWheel.move_absolute(-1 * inchToTick(10,18,3.25),10);
 	}
-
+	return;
 	while (true) 
 	{
 	int speed = master.get_analog(ANALOG_LEFT_Y);
