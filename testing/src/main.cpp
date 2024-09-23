@@ -86,9 +86,9 @@ void opcontrol()
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Motor leftWheel(6);
 	pros::Motor rightWheel(5);
-	while(leftWheel.get_position() < inchToTick(10,18,3.25)){
-		leftWheel.move_absolute(inchToTick(10,18,3.25),10);
-		rightWheel.move_absolute(inchToTick(10,18,3.25),10);
+	while(leftWheel.get_position() < inchToTick(10,18,4)){
+		leftWheel.move_absolute(inchToTick(10,18,4),10);
+		rightWheel.move_absolute(inchToTick(-10,18,4),10);
 	}
 
 	while (true) 
@@ -98,7 +98,7 @@ void opcontrol()
 	rightWheel.move( speed);
 	pros::lcd::initialize();
 	char pos[] = "";
-	sprintf(pos,"%f",leftWheel.get_position());
+	sprintf(pos,"%f \n ",leftWheel.get_position());
 	pros::lcd::set_text(1,pos);
 		pros::delay(20);                               // Run for 20 ms then update
 	}
