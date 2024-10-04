@@ -79,19 +79,50 @@ void autonomous()
 float inchToTick(float inch, float gearRatio, float wheelDia){
 	return inch*((50 * gearRatio)/( wheelDia * 3.14159));
 }
-
+//Less than 
+//Greater than 13.1
+float BOT_LENGTH = 13.;
+float PI = 3.14159;
 
 void opcontrol()
  {
+	pros::lcd::set_text(1,"op control active");
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Motor leftWheel(6);
 	pros::Motor rightWheel(5);
-	while(leftWheel.get_position() < inchToTick(10,18,4)){
-		leftWheel.move_absolute(inchToTick(10,18,4),10);
-		rightWheel.move_absolute(inchToTick(-10,18,4),10);
+
+	for (int i = 1; i < 4; i++) {
+	while (rightWheel.get_position() > inchToTick(1 * PI * BOT_LENGTH,18,4)) {
+		rightWheel.move_absolute(inchToTick( PI * BOT_LENGTH, 18, 4), 100);
+		leftWheel.move_absolute( inchToTick( PI * BOT_LENGTH, 18, 4), 100);
+		pros::delay(10);
+	}
 	}
 
-	while (true) 
+	rightWheel.tare_position();
+	leftWheel.tare_position();
+ 
+	for (int i = 0; i < 4; i++) {
+			char pos[] = "";
+		sprintf(pos,"%f \n ",BOT_LENGTH);
+		pros::lcd::set_text(1,pos); 
+		while(rightWheel.get_position() > inchToTick( -40, 18, 4)) {
+			rightWheel.move_absolute(inchToTick( -40, 18, 4), 100);
+			leftWheel.move_absolute(inchToTick( 40, 18, 4), 100);
+			pros::delay(10);
+		}
+		
+		rightWheel.tare_position();
+		leftWheel.tare_position();
+		while(rightWheel.get_position() > inchToTick((BOT_LENGTH * -2 * PI / 4), 18, 4)) {
+			rightWheel.move_absolute(inchToTick(((BOT_LENGTH * -2 * PI) / 4), 18, 4), 100);
+			pros::delay(10);	
+		}
+		rightWheel.tare_position();
+		leftWheel.tare_position();
+ 	}
+
+	while (false) 
 	{
 	int speed = master.get_analog(ANALOG_LEFT_Y);
 	leftWheel.move( -1 * speed);
