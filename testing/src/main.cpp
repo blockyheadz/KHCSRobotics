@@ -79,58 +79,62 @@ void autonomous()
 float inchToTick(float inch, float gearRatio, float wheelDia){
 	return inch*((50 * gearRatio)/( wheelDia * 3.14159));
 }
-//Less than 
-//Greater than 13.1
-float BOT_LENGTH = 13.;
-float PI = 3.14159;
+
+//Robot width is greater than 13.130
+//Robot width is less than 13.135
+float const ROBOT_WIDTH = 13.1325;
+float const PI = 3.1415928;
 
 void opcontrol()
  {
-	pros::lcd::set_text(1,"op control active");
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Motor leftWheel(6);
 	pros::Motor rightWheel(5);
 
-	for (int i = 1; i < 4; i++) {
-	while (rightWheel.get_position() > inchToTick(1 * PI * BOT_LENGTH,18,4)) {
-		rightWheel.move_absolute(inchToTick( PI * BOT_LENGTH, 18, 4), 100);
-		leftWheel.move_absolute( inchToTick( PI * BOT_LENGTH, 18, 4), 100);
-		pros::delay(10);
-	}
+	float tick = inchToTick(PI * ROBOT_WIDTH, 18, 4);
+
+	while(leftWheel.get_position() < tick){
+		leftWheel.move_absolute(tick, 10);
+		rightWheel.move_absolute(tick, 10);
 	}
 
-	rightWheel.tare_position();
-	leftWheel.tare_position();
- 
 	for (int i = 0; i < 4; i++) {
-			char pos[] = "";
-		sprintf(pos,"%f \n ",BOT_LENGTH);
-		pros::lcd::set_text(1,pos); 
-		while(rightWheel.get_position() > inchToTick( -40, 18, 4)) {
-			rightWheel.move_absolute(inchToTick( -40, 18, 4), 100);
-			leftWheel.move_absolute(inchToTick( 40, 18, 4), 100);
+		float tick = inchToTick(PI * ROBOT_WIDTH, 18, 4) / 4;
+
+		rightWheel.tare_position();
+		leftWheel.tare_position();
+
+		while(leftWheel.get_position() < inchToTick(20,18,4)) {
+			leftWheel.move_absolute(inchToTick(20, 18, 4), 50);
+			rightWheel.move_absolute(inchToTick(-20, 19, 4), 50);
 			pros::delay(10);
 		}
-		
-		rightWheel.tare_position();
-		leftWheel.tare_position();
-		while(rightWheel.get_position() > inchToTick((BOT_LENGTH * -2 * PI / 4), 18, 4)) {
-			rightWheel.move_absolute(inchToTick(((BOT_LENGTH * -2 * PI) / 4), 18, 4), 100);
-			pros::delay(10);	
-		}
-		rightWheel.tare_position();
-		leftWheel.tare_position();
- 	}
 
-	while (false) 
+		leftWheel.tare_position();
+		rightWheel.tare_position();
+
+		while(leftWheel.get_position() < tick){
+		leftWheel.move_absolute(tick, 30);
+		rightWheel.move_absolute(tick, 30);
+		pros::delay(10);
+		}
+
+		rightWheel.tare_position();
+		leftWheel.tare_position();
+	}
+
+	while(true)
 	{
 	int speed = master.get_analog(ANALOG_LEFT_Y);
 	leftWheel.move( -1 * speed);
 	rightWheel.move( speed);
 	pros::lcd::initialize();
 	char pos[] = "";
-	sprintf(pos,"%f \n ",leftWheel.get_position());
+	sprintf(pos,"%f",leftWheel.get_position());
 	pros::lcd::set_text(1,pos);
-		pros::delay(20);                               // Run for 20 ms then update
+	master.print(0,0,"%i",master.get_analog(ANALOG_LEFT_X));
+	pros::delay(20);                           // Run for 20 ms then update
 	}
 }
+
+
