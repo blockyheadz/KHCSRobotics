@@ -77,13 +77,25 @@ void autonomous()
  * task, not resume it from where it left off.
  */
 float const PI = 3.1415928;
+float const ROBOT_DIAGONAL_WIDTH = 1000/95.5;
 
 float inchToTick(float inch, float gearRatio, float wheelDia){
 	return inch*((50 * gearRatio)/( wheelDia * 3.14159));
 }
 
-//When width was set to 100, it turned 8.8 times
-float const ROBOT_WIDTH = 1000/95.5;
+void rotateAboutCenter(float degree, pros::Motor bl, pros::Motor br, pros::Motor fl, pros::Motor fr) {
+
+	float tick = inchToTick((degree * PI * ROBOT_DIAGONAL_WIDTH / 360), 18, 4);
+	while(bl.get_position() < tick) {
+		fl.move_absolute(tick, 33);
+		bl.move_absolute(tick, 33);
+
+		br.move_absolute(tick, 33);
+		fr.move_absolute(tick, 33);
+		pros::delay(10);
+
+	}
+}
 
 void opcontrol()
  {
@@ -93,7 +105,9 @@ void opcontrol()
 	pros::Motor backRight(16);
 	pros::Motor backLeft(15);
 
-	float tick = inchToTick(PI * ROBOT_WIDTH, 18, 4);
+	float tick = inchToTick(PI * ROBOT_DIAGONAL_WIDTH, 18, 4);
+
+	rotateAboutCenter(360, backLeft, backRight, leftWheel, rightWheel);
 
 	while(backLeft.get_position() < tick) {
 		leftWheel.move_absolute(tick, 33);
@@ -106,7 +120,7 @@ void opcontrol()
 	}
 
 	for (int i = 0; i < 4; i++) {
-		float tick = (inchToTick(PI * ROBOT_WIDTH, 18, 4) / 4);
+		float tick = (inchToTick(PI * ROBOT_DIAGONAL_WIDTH, 18, 4) / 4);
 
 		pros::lcd::initialize();
 		char pos[] = "";
