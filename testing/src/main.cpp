@@ -82,7 +82,7 @@ float inchToTick(float inch, float gearRatio, float wheelDia){
 	return inch*((50 * gearRatio)/( wheelDia * 3.14159));
 }
 
-//When width was set to 100, it turned 8.8 times
+//When width was set to 1000, it turned 95.5 times
 float const ROBOT_WIDTH = 1000/95.5;
 
 void opcontrol()
