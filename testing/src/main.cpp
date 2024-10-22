@@ -78,27 +78,36 @@ void autonomous() {}
 void opcontrol()
  {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor front_right(10); 
-	pros::Motor front_left(1);  
-	pros::Motor back_left(11);
-	pros::Motor back_right(0);
+	pros::Motor frontLeft(10); 
+	pros::Motor frontRight(1);  
+	pros::Motor backLeft(11);
+	pros::Motor backRight(0);
+	pros::Motor midLeft(0);
+	pros::Motor midRight(0);
+
+	pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
+	pros::Motor rightDrive[] = {frontRight, midRight, backRight};
+
 
 	while (true) 
 	{
 
 	pros::lcd::initialize();
 	char pos[] = "";
-	sprintf(pos,"%f",front_left.get_position());
+	sprintf(pos,"%f",frontLeft.get_position());
 	pros::lcd::set_text(1,pos);
-		// Arcade control scheme
-		int power = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick                     // Sets right motor voltage
-		int turning = master.get_analog(ANALOG_RIGHT_X);
-		int right_train = power + turning;
-		int left_train = -1*( power - turning);
-		front_left.move((left_train));
-		back_left.move(left_train);
-		front_right.move(right_train);
-		back_right.move(right_train);
+		// Zero Turn Lawnmore
+		int right = master.get_analog(ANALOG_RIGHT_Y);
+		int left = master.get_analog(ANALOG_LEFT_Y);
+		
+		for (pros::Motor motor : leftDrive) {
+			motor.move(left);
+		}
+		for (pros::Motor motor :rightDrive) {
+			motor.move( -1 * right);
+		}
+
+		
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }
