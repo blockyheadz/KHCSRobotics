@@ -97,14 +97,27 @@ void opcontrol()
 	sprintf(pos,"%f",frontLeft.get_position());
 	pros::lcd::set_text(1,pos);
 		// Zero Turn Lawnmore
-		int right = master.get_analog(ANALOG_RIGHT_Y);
-		int left = master.get_analog(ANALOG_LEFT_Y);
+		int turn = master.get_analog(ANALOG_RIGHT_X);
+		int power = master.get_analog(ANALOG_LEFT_Y);
 		
-		for (pros::Motor motor : leftDrive) {
-			motor.move(left);
+		//Moving forward turn right
+		if(turn > 0 && power > 0) {
+			for (pros::Motor left : leftDrive) {
+				left.move(power );
+			}
+			for (pros::Motor right :rightDrive) {
+				right.move( -1 * power + (power * turn / 128));
+			}
 		}
-		for (pros::Motor motor :rightDrive) {
-			motor.move( -1 * right);
+
+		//Moving forward and turning left
+		if(turn < 0 && power > 0) {
+			for(pros::Motor left : leftDrive) {
+				left.move(power - (power * turn /128));
+			}
+			for(pros::Motor right : rightDrive) {
+				right.move( -1 * power);
+			}
 		}
 
 		
