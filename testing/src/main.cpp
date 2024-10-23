@@ -108,9 +108,34 @@ void opcontrol()
 	pros::Motor rightWheel(6);
 	pros::Motor backRight(16);
 	pros::Motor backLeft(15);
+	pros::lcd::initialize;
 
 	float tick = inchToTick(PI * ROBOT_WIDTH, 18, 4);
-	rotateAroundCenter(360, backLeft, leftWheel, backRight, rightWheel);
+	//rotateAroundCenter(360, backLeft, leftWheel, backRight, rightWheel);
+
+	while(true) {
+		int power = master.get_analog(ANALOG_LEFT_Y);
+		int turning = master.get_analog(ANALOG_RIGHT_X);
+		char info[] ="";
+		sprintf(info,"This is the power %i \n This is the turn %i", power, turning);
+		pros::lcd::set_text(1, info);
+
+		if (turning >= 0) {
+			leftWheel.move(power + turning);
+			backLeft.move(power + turning);
+
+			rightWheel.move(-1 * (power  - turning));
+			backRight.move( -1 * (power - turning));
+		} else {
+			rightWheel.move( -1 * (power + turning));
+			backRight.move(-1 * (power + turning));
+
+			leftWheel.move((power - turning));
+			backLeft.move((power - turning));
+		}
+
+		pros::delay(20);
+	}
 
 	while(backLeft.get_position() < tick) {
 		leftWheel.move_absolute(tick, 33);
