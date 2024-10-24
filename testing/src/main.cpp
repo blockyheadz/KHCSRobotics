@@ -26,6 +26,18 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::Motor frontLeft(20); 
+	pros::Motor frontRight(11);  
+	pros::Motor backLeft(18);
+	pros::Motor backRight(13);
+	pros::Motor midLeft(19);
+	pros::Motor midRight(12);
+
+	pros::lcd::initialize();
+	pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
+	pros::Motor rightDrive[] = {frontRight, midRight, backRight};
+
 	pros::lcd::register_btn1_cb(on_center_button);
 }
 
@@ -58,7 +70,33 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::Motor frontLeft(20); 
+	pros::Motor frontRight(11);  
+	pros::Motor backLeft(18);
+	pros::Motor backRight(13);
+	pros::Motor midLeft(19);
+	pros::Motor midRight(12);
+
+	pros::lcd::initialize();
+	pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
+	pros::Motor rightDrive[] = {frontRight, midRight, backRight};
+	
+	int speed = 50;
+	int tickToTurn = 100000;
+	while(leftDrive[0].get_position() < tickToTurn) {
+		for (pros::Motor left : leftDrive) {
+			left.move_absolute(-1 * tickToTurn, speed);
+		}
+		
+		for (pros::Motor right : rightDrive) {
+			right.move_absolute(tickToTurn, speed);
+		}
+		pros::delay(20);
+	}
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -78,47 +116,52 @@ void autonomous() {}
 void opcontrol()
  {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor frontLeft(10); 
-	pros::Motor frontRight(1);  
-	pros::Motor backLeft(11);
-	pros::Motor backRight(0);
-	pros::Motor midLeft(0);
-	pros::Motor midRight(0);
+	pros::Motor frontLeft(20); 
+	pros::Motor frontRight(11);  
+	pros::Motor backLeft(18);
+	pros::Motor backRight(13);
+	pros::Motor midLeft(19);
+	pros::Motor midRight(12);
 
+	pros::lcd::initialize();
 	pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
 	pros::Motor rightDrive[] = {frontRight, midRight, backRight};
 
 
+	int speed = 200;
+	int tickToTurn = 100000/16;
+	while(leftDrive[0].get_position() < tickToTurn) {
+		for (pros::Motor left : leftDrive) {
+			left.move_absolute(tickToTurn, speed);
+		}
+		
+		for (pros::Motor right : rightDrive) {
+			right.move_absolute(tickToTurn, speed);
+		}
+		pros::delay(20);
+	}
+
 	while (true) 
 	{
-
-	pros::lcd::initialize();
-	char pos[] = "";
-	sprintf(pos,"%f",frontLeft.get_position());
-	pros::lcd::set_text(1,pos);
-		// Zero Turn Lawnmore
 		int turn = master.get_analog(ANALOG_RIGHT_X);
 		int power = master.get_analog(ANALOG_LEFT_Y);
+		pros::lcd::initialize();
+		char pos[] = "";
+		sprintf(pos,"This is power %i \n This is turn %i", power, turn);
+		pros::lcd::set_text(1,pos);
 		
 		//Moving forward turn right
-		if(turn > 0 && power > 0) {
-			for (pros::Motor left : leftDrive) {
-				left.move(power );
-			}
-			for (pros::Motor right :rightDrive) {
-				right.move( -1 * power + (power * turn / 128));
-			}
+		
+		for (pros::Motor left : leftDrive) {
+			left.move(-1 * (power + turn));
 		}
+		for (pros::Motor right :rightDrive) {
+			right.move( (power - turn));
+		}
+		
 
 		//Moving forward and turning left
-		if(turn < 0 && power > 0) {
-			for(pros::Motor left : leftDrive) {
-				left.move(power - (power * turn /128));
-			}
-			for(pros::Motor right : rightDrive) {
-				right.move( -1 * power);
-			}
-		}
+		
 
 		
 		pros::delay(20);                               // Run for 20 ms then update
