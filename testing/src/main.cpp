@@ -108,6 +108,7 @@ void opcontrol()
 	pros::Motor rightWheel(6);
 	pros::Motor backRight(16);
 	pros::Motor backLeft(15);
+	pros::ADIDigitalOut piston('A');
 	pros::lcd::initialize;
 
 	float tick = inchToTick(PI * ROBOT_WIDTH, 18, 4);
@@ -117,7 +118,17 @@ void opcontrol()
 		int power = master.get_analog(ANALOG_LEFT_Y);
 		int turning = master.get_analog(ANALOG_RIGHT_X);
 		char info[] ="";
-		sprintf(info,"This is the power %i \n This is the turn %i", power, turning);
+		
+		if(master.get_digital(DIGITAL_A)) {
+			sprintf(info,"IT IS ON");
+			piston.set_value(true);
+		} else {
+			sprintf(info, "its off");
+			piston.set_value(false);
+		}
+
+
+		piston.set_value(master.get_digital(DIGITAL_A));
 		pros::lcd::set_text(1, info);
 
 		if (turning >= 0) {
@@ -127,11 +138,11 @@ void opcontrol()
 			rightWheel.move(-1 * (power  - turning));
 			backRight.move( -1 * (power - turning));
 		} else {
-			rightWheel.move( -1 * (power + turning));
-			backRight.move(-1 * (power + turning));
+			rightWheel.move( -1 * (power - turning));
+			backRight.move(-1 * (power - turning));
 
-			leftWheel.move((power - turning));
-			backLeft.move((power - turning));
+			leftWheel.move((power + turning));
+			backLeft.move((power + turning));
 		}
 
 		pros::delay(20);
