@@ -78,12 +78,33 @@ void autonomous()
  */
 float const PI = 3.1415928;
 
+//When width was set to 1000, it turned 95.5 times
+float const ROBOT_WIDTH = 1000/95.5;
+
 float inchToTick(float inch, float gearRatio, float wheelDia){
 	return inch*((50 * gearRatio)/( wheelDia * 3.14159));
 }
 
+<<<<<<< HEAD
 //When width was set to 1000, it turned 95.5 times
 float const ROBOT_WIDTH = 1000/95.5;
+=======
+void rotateAroundCenter(float degree, pros::Motor bl, pros::Motor fl, pros::Motor br, pros::Motor fr) {
+	float tick = inchToTick(PI * ROBOT_WIDTH * degree / 360, 18, 4);
+	while(bl.get_position() < tick) {
+		bl.move_absolute(tick, 33);
+		fl.move_absolute(tick, 33);
+
+		fr.move_absolute(tick, 33);
+		br.move_absolute(tick, 33);
+	}
+	bl.tare_position();
+	br.tare_position();
+
+	fr.tare_position();
+	fl.tare_position();
+}
+>>>>>>> personalTesting
 
 void opcontrol()
  {
@@ -92,8 +113,45 @@ void opcontrol()
 	pros::Motor rightWheel(6);
 	pros::Motor backRight(16);
 	pros::Motor backLeft(15);
+	pros::ADIDigitalOut piston('A');
+	pros::lcd::initialize;
 
 	float tick = inchToTick(PI * ROBOT_WIDTH, 18, 4);
+	//rotateAroundCenter(360, backLeft, leftWheel, backRight, rightWheel);
+
+	while(true) {
+		int power = master.get_analog(ANALOG_LEFT_Y);
+		int turning = master.get_analog(ANALOG_RIGHT_X);
+		char info[] ="";
+		
+		if(master.get_digital(DIGITAL_A)) {
+			sprintf(info,"IT IS ON");
+			piston.set_value(true);
+		} else {
+			sprintf(info, "its off");
+			piston.set_value(false);
+		}
+
+
+		piston.set_value(master.get_digital(DIGITAL_A));
+		pros::lcd::set_text(1, info);
+
+		if (turning >= 0) {
+			leftWheel.move(power + turning);
+			backLeft.move(power + turning);
+
+			rightWheel.move(-1 * (power  - turning));
+			backRight.move( -1 * (power - turning));
+		} else {
+			rightWheel.move( -1 * (power - turning));
+			backRight.move(-1 * (power - turning));
+
+			leftWheel.move((power + turning));
+			backLeft.move((power + turning));
+		}
+
+		pros::delay(20);
+	}
 
 	while(backLeft.get_position() < tick) {
 		leftWheel.move_absolute(tick, 33);
