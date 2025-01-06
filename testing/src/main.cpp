@@ -9,6 +9,7 @@ pros::Motor backRight(5);
 pros::Motor midLeft(3);
 pros::Motor midRight(6);
 pros::Motor intake(7); // Assuming intake is motor 7
+pros::ADIDigitalOut mobileGoal('A');
 
 // Arrays for drivetrain motors (left and right)
 pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
@@ -82,6 +83,12 @@ void opcontrol() {
         char buffer[100];
         sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
         pros::lcd::set_text(1, buffer);
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+            mobileGoal.set_value(true);
+        } else {
+            mobileGoal.set_value(false);
+        }
 
         // Set left and right motor power for drivetrain
         for (pros::Motor left : leftDrive) {
