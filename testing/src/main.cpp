@@ -85,9 +85,9 @@ void opcontrol() {
         pros::lcd::set_text(1, buffer);
 
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-            mobileGoal.set_value(true);
-        } else {
             mobileGoal.set_value(false);
+        } else {
+            mobileGoal.set_value(true);
         }
 
         // Set left and right motor power for drivetrain
