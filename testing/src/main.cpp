@@ -2,12 +2,12 @@
 
 // Global objects for controllers and motors
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor frontLeft(20); 
-pros::Motor frontRight(11);  
-pros::Motor backLeft(18);
-pros::Motor backRight(13);
-pros::Motor midLeft(19);
-pros::Motor midRight(12);
+pros::Motor frontLeft(1); 
+pros::Motor frontRight(4);  
+pros::Motor backLeft(2);
+pros::Motor backRight(5);
+pros::Motor midLeft(3);
+pros::Motor midRight(6);
 pros::Motor intake(7); // Assuming intake is motor 7
 
 // Arrays for drivetrain motors (left and right)
@@ -75,8 +75,8 @@ void autonomous() {
 void opcontrol() {
     while (true) {
         // Getting joystick input from the controller
-        int forward = master.get_analog(ANALOG_LEFT_Y);  // Forward/Backward
-        int turn = master.get_analog(ANALOG_RIGHT_X);    // Turning
+        int forward = -1 * master.get_analog(ANALOG_RIGHT_X);  // Forward/Backward
+        int turn =  master.get_analog(ANALOG_LEFT_Y);    // Turning
 
         // Display values on LCD (optional)
         char buffer[100];
