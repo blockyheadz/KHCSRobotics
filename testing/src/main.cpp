@@ -74,6 +74,7 @@ void autonomous() {
 
 // Teleoperated (Manual) Control
 void opcontrol() {
+    bool mobileGoalToggle = false;
     while (true) {
         // Getting joystick input from the controller
         int forward = -1 * master.get_analog(ANALOG_RIGHT_X);  // Forward/Backward
@@ -85,10 +86,13 @@ void opcontrol() {
         pros::lcd::set_text(1, buffer);
 
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-            mobileGoal.set_value(true);
-        } else {
-            mobileGoal.set_value(false);
-        }
+            if (mobileGoalToggle) {
+                mobileGoalToggle = false;
+            } else {
+                mobileGoalToggle = true;
+            }
+        } 
+        mobileGoal.set_value(mobileGoalToggle);
 
         // Set left and right motor power for drivetrain
         for (pros::Motor left : leftDrive) {
