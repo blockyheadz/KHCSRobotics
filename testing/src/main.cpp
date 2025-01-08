@@ -74,6 +74,8 @@ void autonomous() {
 
 // Teleoperated (Manual) Control
 void opcontrol() {
+
+    //These booleans are used to make the pnumatics toggle
     bool mobileGoalToggle = false;
     bool mobileGoalPressed = false;
     while (true) {
@@ -86,6 +88,7 @@ void opcontrol() {
         sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
         pros::lcd::set_text(1, buffer);
 
+        //This code checks for input and toggle pnumatics
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
             if (!mobileGoalPressed) {
                 if(mobileGoalToggle) {
