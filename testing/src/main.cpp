@@ -82,7 +82,7 @@ void opcontrol() {
 
     //These are the values to manage how it drives
     int deadzone = 12; // +-12 is the deadzone out of 128
-    int turningConstant = 50; //Speed of slower motor when max turn max power
+    int turningConstant = 50; //Speed of slower motor when max turn max power in rpm
 
     while (true) {
         // Getting joystick input from the controller
