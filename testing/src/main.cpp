@@ -31,6 +31,7 @@ void initialize() {
     pros::lcd::initialize();
     pros::lcd::set_text(1, "Hello PROS User!");
     pros::lcd::register_btn1_cb(on_center_button);
+    
 }
 
 // Disabled mode function
@@ -131,10 +132,14 @@ void opcontrol() {
 
         //This takes the final values of the right and left drive and applies them
         for (pros::Motor m : leftDrive) {
-            m.move_velocity(leftDrivePer);
+            if (leftDrivePer != 0) {
+                m.move_velocity(leftDrivePer);
+            }
         }
         for (pros::Motor m : rightDrive) {
-            m.move_velocity(rightDrivePer);
+            if (rightDrivePer != 0) {
+                m.move_velocity(rightDrivePer);
+            }
         }
 
 
