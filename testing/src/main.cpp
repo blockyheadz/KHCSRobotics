@@ -78,15 +78,67 @@ void opcontrol() {
     //These booleans are used to make the pnumatics toggle
     bool mobileGoalToggle = false;
     bool mobileGoalPressed = false;
+
+    //These are the values to manage how it drives
+    int deadzone = 12; // +-12 is the deadzone out of 128
+    int turningConstant = 50; //Speed of slower motor when max turn max power
+
     while (true) {
         // Getting joystick input from the controller
-        int forward = -1 * master.get_analog(ANALOG_RIGHT_X);  // Forward/Backward
-        int turn =  master.get_analog(ANALOG_LEFT_Y);    // Turning
+        int rawPower = master.get_analog(ANALOG_LEFT_Y);  // Forward/Backward
+        int rawTurn =  master.get_analog(ANALOG_RIGHT_X);    // Turning
 
-        // Display values on LCD (optional)
-        char buffer[100];
-        sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
-        pros::lcd::set_text(1, buffer);
+        //This converts the joystick values to percentages
+        double powerPer = 0;
+        double turnPer = 0;
+        if (abs(rawPower) - deadzone > 0) { //If the power exceeds deadzone
+            if (rawPower > 0) {
+                powerPer = (rawPower - deadzone + 0.0) / (127 - deadzone);
+            } else {
+                powerPer = (rawPower + deadzone + 0.0) / (127 - deadzone);
+            }
+        }
+        if (abs(rawTurn) - deadzone > 0) { //If the turn exceeds deadzone
+            if (rawTurn > 0) {
+                turnPer = (rawTurn - deadzone + 0.0) / (127 - deadzone); 
+            } else {
+                turnPer = (rawTurn + deadzone + 0.0) / (127 - deadzone);
+            }
+        }
+
+        int rightDrivePer = 0;
+        int leftDrivePer = 0;
+        //This manages turning to the right or going straight
+        if (turnPer >=0 ) {
+            if (abs(turnPer) > abs(powerPer)) {
+                leftDrivePer = turnPer * 200;
+                rightDrivePer = (powerPer / turnPer) * (200 + turningConstant) - 200;
+            } else {
+                leftDrivePer = powerPer * 200;
+                rightDrivePer = (turnPer / powerPer) * (200 - turningConstant) + 200;
+            }
+        }
+        //This manages turning to the left
+        if (turnPer < 0) {
+            if (abs(turnPer) > abs(powerPer)) {
+                rightDrivePer = turnPer * 200;
+                leftDrivePer = (powerPer / turnPer) * (200 + turningConstant) - 200;
+            } else {
+                rightDrivePer = powerPer * 200;
+                leftDrivePer = (turnPer / powerPer) * (200 - turningConstant) + 200;
+            }
+        }
+
+        //This takes the final values of the right and left drive and applies them
+        for (pros::Motor m : leftDrive) {
+            m.move_velocity(leftDrivePer);
+        }
+        for (pros::Motor m : rightDrive) {
+            m.move_velocity(rightDrivePer);
+        }
+
+
+
 
         //This code checks for input and toggle pnumatics
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
@@ -103,13 +155,7 @@ void opcontrol() {
         }
         mobileGoal.set_value(mobileGoalToggle);
 
-        // Set left and right motor power for drivetrain
-        for (pros::Motor left : leftDrive) {
-            left.move(forward + turn);
-        }
-        for (pros::Motor right : rightDrive) {
-            right.move(forward - turn);
-        }
+        
 
         // Intake control (example: controlled by controller buttons)
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
