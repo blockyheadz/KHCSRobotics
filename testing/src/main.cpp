@@ -120,20 +120,32 @@ void opcontrol() {
         int rightDrivePer = 0;
         int leftDrivePer = 0;
         //This manages turning to the right
-        if (turnPer > 0 ) {
-            if (abs(turnPer) > abs(powerPer)) {
+        if (turnPer > 0.0 ) {
+            if (turnPer*turnPer > powerPer*powerPer) {
                 leftDrivePer = turnPer * maxRPM;
-                rightDrivePer = (powerPer / turnPer) * (maxRPM + turningConstant) - maxRPM;
+                if (powerPer != 0) {
+                    rightDrivePer = (powerPer / turnPer) * (maxRPM + turningConstant) - maxRPM;
+                } else {
+                    rightDrivePer = -1 * leftDrivePer;
+                }
             } else {
                 leftDrivePer = powerPer * maxRPM;
-                rightDrivePer = (turnPer / powerPer) * (turningConstant - maxRPM) + maxRPM;
+                if (turnPer != 0) {
+                    rightDrivePer = (turnPer / powerPer) * (turningConstant - maxRPM) + maxRPM;
+                } else {
+                    int hi = 1;
+                }
             }
         }
         //This manages turning to the left
-        if (turnPer < 0) {
-            if (abs(turnPer) > abs(powerPer)) {
+        if (turnPer < 0.0) {
+            if (turnPer*turnPer > powerPer*powerPer) {
                 rightDrivePer = turnPer * maxRPM;
-                leftDrivePer = (powerPer / turnPer) * (maxRPM + turningConstant) - maxRPM;
+                if (powerPer != 0) {
+                    leftDrivePer = (powerPer / turnPer) * (maxRPM + turningConstant) - maxRPM;
+                } else {
+                    leftDrivePer = turnPer * maxRPM;
+                }
             } else {
                 rightDrivePer = powerPer * maxRPM;
                 leftDrivePer = (turnPer / powerPer) * (turningConstant - maxRPM) + maxRPM;
