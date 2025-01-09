@@ -1,16 +1,22 @@
 #include "main.h"
 
-// Global objects for controllers and motors
+// Global objects for controllers and motors with updated ports
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor frontLeft(20); 
-pros::Motor frontRight(11);  
-pros::Motor backLeft(18);
-pros::Motor backRight(13);
-pros::Motor midLeft(19);
-pros::Motor midRight(12);
-pros::Motor intake(7); // Assuming intake is motor 7
 
-// Arrays for drivetrain motors (left and right)
+// Left drivetrain motors (ports 1, 2, 3)
+pros::Motor frontLeft(1); 
+pros::Motor midLeft(2);
+pros::Motor backLeft(3);
+
+// Right drivetrain motors (ports 4, 5, 6)
+pros::Motor frontRight(4);
+pros::Motor midRight(5);
+pros::Motor backRight(6);
+
+// Intake motor on port 7 (assuming this is correct)
+pros::Motor intake(7);
+
+// Arrays for the left and right drivetrain motors
 pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
 pros::Motor rightDrive[] = {frontRight, midRight, backRight};
 
