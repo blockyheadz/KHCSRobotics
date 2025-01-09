@@ -83,15 +83,23 @@ void opcontrol() {
     //These are the values to manage how it drives
     int deadzone = 12; // +-12 is the deadzone out of 128
     int turningConstant = 50; //Speed of slower motor when max turn max power in rpm
+    int maxRPM = 200; //This is the maximum rpm the robot should reach
 
     while (true) {
         // Getting joystick input from the controller
         int rawPower = master.get_analog(ANALOG_LEFT_Y);  // Forward/Backward
         int rawTurn =  master.get_analog(ANALOG_RIGHT_X);    // Turning
 
+        //Turbo mode
+        if (master.get_digital(DIGITAL_L2)) {
+            maxRPM = 400;
+        } else {
+            maxRPM = 200;
+        }
+
         //This converts the joystick values to percentages
-        double powerPer = 0;
-        double turnPer = 0;
+        float powerPer = 0;
+        float turnPer = 0;
         if (abs(rawPower) - deadzone > 0) { //If the power exceeds deadzone
             if (rawPower > 0) {
                 powerPer = (rawPower - deadzone + 0.0) / (127 - deadzone);
@@ -109,39 +117,47 @@ void opcontrol() {
 
         int rightDrivePer = 0;
         int leftDrivePer = 0;
-        //This manages turning to the right or going straight
-        if (turnPer >=0 ) {
+        //This manages turning to the right
+        if (turnPer > 0 ) {
             if (abs(turnPer) > abs(powerPer)) {
-                leftDrivePer = turnPer * 200;
-                rightDrivePer = (powerPer / turnPer) * (200 + turningConstant) - 200;
+                leftDrivePer = turnPer * maxRPM;
+                rightDrivePer = (powerPer / turnPer) * (maxRPM + turningConstant) - maxRPM;
             } else {
-                leftDrivePer = powerPer * 200;
-                rightDrivePer = (turnPer / powerPer) * (200 - turningConstant) + 200;
+                leftDrivePer = powerPer * maxRPM;
+                rightDrivePer = (turnPer / powerPer) * (turningConstant - maxRPM) + maxRPM;
             }
         }
         //This manages turning to the left
         if (turnPer < 0) {
             if (abs(turnPer) > abs(powerPer)) {
-                rightDrivePer = turnPer * 200;
-                leftDrivePer = (powerPer / turnPer) * (200 + turningConstant) - 200;
+                rightDrivePer = turnPer * maxRPM;
+                leftDrivePer = (powerPer / turnPer) * (maxRPM + turningConstant) - maxRPM;
             } else {
-                rightDrivePer = powerPer * 200;
-                leftDrivePer = (turnPer / powerPer) * (200 - turningConstant) + 200;
+                rightDrivePer = powerPer * maxRPM;
+                leftDrivePer = (turnPer / powerPer) * (turningConstant - maxRPM) + maxRPM;
             }
+        }
+        //This works if it it going straight
+        if (turnPer == 0) {
+            rightDrivePer = powerPer * maxRPM;
+            leftDrivePer = powerPer * maxRPM;
         }
 
         //This takes the final values of the right and left drive and applies them
         for (pros::Motor m : leftDrive) {
-            if (leftDrivePer != 0) {
-                m.move_velocity(leftDrivePer);
+            if (true) {
+                //m.move_velocity(leftDrivePer);
             }
         }
         for (pros::Motor m : rightDrive) {
-            if (rightDrivePer != 0) {
-                m.move_velocity(rightDrivePer);
+            if (true) {
+                //m.move_velocity(rightDrivePer);
             }
         }
 
+        char str[300];
+        sprintf(str, "%i  %i \n%.2f  %.2f \n %i  %i", rawPower, rawTurn, powerPer, turnPer, leftDrivePer, rightDrivePer);
+        pros::lcd::set_text(1,str);
 
 
 
@@ -171,6 +187,6 @@ void opcontrol() {
             intake.move(0);  // Stop intake
         }
 
-        pros::delay(20);  // Run this loop every 20 milliseconds
+        pros::delay(40);  // Run this loop every 20 milliseconds
     }
 }
