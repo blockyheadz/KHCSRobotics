@@ -2,6 +2,17 @@
 
 // Global objects for controllers and motors with updated ports
 pros::Controller master(pros::E_CONTROLLER_MASTER);
+<<<<<<< HEAD
+=======
+pros::Motor frontLeft(1); 
+pros::Motor frontRight(4);  
+pros::Motor backLeft(2);
+pros::Motor backRight(5);
+pros::Motor midLeft(3);
+pros::Motor midRight(6);
+pros::Motor intake(7); // Assuming intake is motor 7
+pros::ADIDigitalOut mobileGoal('A');
+>>>>>>> 9ac66c9a3e670e5447abfbc7c80510ec184de14c
 
 // Left drivetrain motors (ports 1, 2, 3)
 pros::Motor frontLeft(1); 
@@ -79,15 +90,31 @@ void autonomous() {
 
 // Teleoperated (Manual) Control
 void opcontrol() {
+    bool mobileGoalToggle = false;
+    bool mobileGoalPressed = false;
     while (true) {
         // Getting joystick input from the controller
-        int forward = master.get_analog(ANALOG_LEFT_Y);  // Forward/Backward
-        int turn = master.get_analog(ANALOG_RIGHT_X);    // Turning
+        int forward = -1 * master.get_analog(ANALOG_RIGHT_X);  // Forward/Backward
+        int turn =  master.get_analog(ANALOG_LEFT_Y);    // Turning
 
         // Display values on LCD (optional)
         char buffer[100];
         sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
         pros::lcd::set_text(1, buffer);
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+            if (!mobileGoalPressed) {
+                if(mobileGoalToggle) {
+                    mobileGoalToggle = false;
+                } else {
+                    mobileGoalToggle = true;
+                }
+                mobileGoalPressed = true;
+            }
+        } else {
+            mobileGoalPressed = false;
+        }
+        mobileGoal.set_value(mobileGoalToggle);
 
         // Set left and right motor power for drivetrain
         for (pros::Motor left : leftDrive) {
