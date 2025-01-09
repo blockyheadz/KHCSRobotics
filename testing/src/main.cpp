@@ -93,8 +93,10 @@ void opcontrol() {
         //Turbo mode
         if (master.get_digital(DIGITAL_L2)) {
             maxRPM = 400;
+            master.set_text(1,1,"TURBO");
         } else {
             maxRPM = 200;
+            master.set_text(1,1,"normal");
         }
 
         //This converts the joystick values to percentages
