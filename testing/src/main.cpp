@@ -1,35 +1,19 @@
 #include "main.h"
 
-// Global objects for controllers and motors with updated ports
+// Global objects for the controller and motors
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-<<<<<<< HEAD
-=======
-pros::Motor frontLeft(1); 
-pros::Motor frontRight(4);  
-pros::Motor backLeft(2);
-pros::Motor backRight(5);
-pros::Motor midLeft(3);
-pros::Motor midRight(6);
-pros::Motor intake(7); // Assuming intake is motor 7
-pros::ADIDigitalOut mobileGoal('A');
->>>>>>> 9ac66c9a3e670e5447abfbc7c80510ec184de14c
 
-// Left drivetrain motors (ports 1, 2, 3)
-pros::Motor frontLeft(1); 
-pros::Motor midLeft(2);
+// Drivetrain motors
+pros::Motor frontLeft(1);
+pros::Motor middleLeft(2);
 pros::Motor backLeft(3);
-
-// Right drivetrain motors (ports 4, 5, 6)
 pros::Motor frontRight(4);
-pros::Motor midRight(5);
+pros::Motor middleRight(5);
 pros::Motor backRight(6);
-
-// Intake motor on port 7 (assuming this is correct)
 pros::Motor intake(7);
 
-// Arrays for the left and right drivetrain motors
-pros::Motor leftDrive[] = {frontLeft, midLeft, backLeft};
-pros::Motor rightDrive[] = {frontRight, midRight, backRight};
+// Mobile goal pneumatic system (updated with non-deprecated type)
+pros::adi::DigitalOut mobileGoal('A');  // Fixed syntax error
 
 // Center button callback for LCD display
 void on_center_button() {
@@ -55,35 +39,37 @@ void disabled() {}
 // Competition initialization function
 void competition_initialize() {}
 
-// Autonomous Drivetrain Movement (Simple Example)
+// Autonomous Mode
 void autonomous() {
-    int speed = 100; // Speed for autonomous movement
-    int distance = 1000; // Arbitrary tick value for distance
+    int speed = 100;    // Speed for autonomous movement
+    int distance = 1000;  // Arbitrary tick value for distance
 
-    // Move forward for 'distance' ticks
-    for (pros::Motor left : leftDrive) {
-        left.move_relative(distance, speed);
-    }
-    for (pros::Motor right : rightDrive) {
-        right.move_relative(distance, speed);
-    }
+    // Move forward
+    frontLeft.move_relative(distance, speed);
+    middleLeft.move_relative(distance, speed);
+    backLeft.move_relative(distance, speed);
 
-    // Wait until motors are done moving
-    while (fabs(leftDrive[0].get_position()) < distance) {
+    frontRight.move_relative(distance, speed);
+    middleRight.move_relative(distance, speed);
+    backRight.move_relative(distance, speed);
+
+    // Wait until motors finish moving
+    while (fabs(frontLeft.get_position()) < distance) {
         pros::delay(20);
     }
 
-    // Turn by moving only the right motors
-    int turnTicks = 500;  // Arbitrary turn value
-    for (pros::Motor left : leftDrive) {
-        left.move_relative(-turnTicks, speed);
-    }
-    for (pros::Motor right : rightDrive) {
-        right.move_relative(turnTicks, speed);
-    }
+    // Turn in place
+    int turnTicks = 500;  // Arbitrary tick value for turning
+    frontLeft.move_relative(-turnTicks, speed);
+    middleLeft.move_relative(-turnTicks, speed);
+    backLeft.move_relative(-turnTicks, speed);
+
+    frontRight.move_relative(turnTicks, speed);
+    middleRight.move_relative(turnTicks, speed);
+    backRight.move_relative(turnTicks, speed);
 
     // Wait until the turn is complete
-    while (fabs(leftDrive[0].get_position()) < turnTicks) {
+    while (fabs(frontLeft.get_position()) < turnTicks) {
         pros::delay(20);
     }
 }
@@ -92,23 +78,29 @@ void autonomous() {
 void opcontrol() {
     bool mobileGoalToggle = false;
     bool mobileGoalPressed = false;
+
     while (true) {
         // Getting joystick input from the controller
-        int forward = -1 * master.get_analog(ANALOG_RIGHT_X);  // Forward/Backward
-        int turn =  master.get_analog(ANALOG_LEFT_Y);    // Turning
+        int forward = master.get_analog(ANALOG_LEFT_Y);   // Forward/backward
+        int turn = master.get_analog(ANALOG_RIGHT_X);     // Turning
 
-        // Display values on LCD (optional)
-        char buffer[100];
-        sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
-        pros::lcd::set_text(1, buffer);
+        // Ensure values are within motor speed range (-127 to 127)
+        int leftPower = std::max(-127, std::min(127, forward + turn));
+        int rightPower = std::max(-127, std::min(127, forward - turn));
 
+        // Set motor power for drivetrain
+        frontLeft.move(leftPower);
+        middleLeft.move(leftPower);
+        backLeft.move(leftPower);
+
+        frontRight.move(rightPower);
+        middleRight.move(rightPower);
+        backRight.move(rightPower);
+
+        // Mobile Goal Lift Control (Button Y)
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
             if (!mobileGoalPressed) {
-                if(mobileGoalToggle) {
-                    mobileGoalToggle = false;
-                } else {
-                    mobileGoalToggle = true;
-                }
+                mobileGoalToggle = !mobileGoalToggle;  // Toggle state
                 mobileGoalPressed = true;
             }
         } else {
@@ -116,15 +108,7 @@ void opcontrol() {
         }
         mobileGoal.set_value(mobileGoalToggle);
 
-        // Set left and right motor power for drivetrain
-        for (pros::Motor left : leftDrive) {
-            left.move(forward + turn);
-        }
-        for (pros::Motor right : rightDrive) {
-            right.move(forward - turn);
-        }
-
-        // Intake control (example: controlled by controller buttons)
+        // Intake Control (Buttons R1 and R2)
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move(100);  // Intake in
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
@@ -132,6 +116,11 @@ void opcontrol() {
         } else {
             intake.move(0);  // Stop intake
         }
+
+        // Optional Debugging on LCD
+        char buffer[100];
+        sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
+        pros::lcd::set_text(1, buffer);
 
         pros::delay(20);  // Run this loop every 20 milliseconds
     }
