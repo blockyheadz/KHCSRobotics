@@ -125,3 +125,11 @@ void opcontrol() {
         pros::delay(20);  // Run this loop every 20 milliseconds
     }
 }
+void opcontrol() {
+   pros::Controller master (E_CONTROLLER_MASTER);
+   pros::Motor cheesecakejr (11);
+   while (true) {
+      cheesecakejr.move(master.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
+      pros::delay(6);
+   }
+}
