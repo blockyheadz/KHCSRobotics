@@ -75,61 +75,12 @@ void autonomous() {
 }
 
 // Teleoperated (Manual) Control
+
 void opcontrol() {
-    bool mobileGoalToggle = false;
-    bool mobileGoalPressed = false;
-
-    while (true) {
-        // Getting joystick input from the controller
-        int forward = master.get_analog(ANALOG_LEFT_Y);   // Forward/backward
-        int turn = master.get_analog(ANALOG_RIGHT_X);     // Turning
-
-        // Ensure values are within motor speed range (-127 to 127)
-        int leftPower = std::max(-127, std::min(127, forward + turn));
-        int rightPower = std::max(-127, std::min(127, forward - turn));
-
-        // Set motor power for drivetrain
-        frontLeft.move(leftPower);
-        middleLeft.move(leftPower);
-        backLeft.move(leftPower);
-
-        frontRight.move(rightPower);
-        middleRight.move(rightPower);
-        backRight.move(rightPower);
-
-        // Mobile Goal Lift Control (Button Y)
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-            if (!mobileGoalPressed) {
-                mobileGoalToggle = !mobileGoalToggle;  // Toggle state
-                mobileGoalPressed = true;
-            }
-        } else {
-            mobileGoalPressed = false;
-        }
-        mobileGoal.set_value(mobileGoalToggle);
-
-        // Intake Control (Buttons R1 and R2)
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            intake.move(100);  // Intake in
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            intake.move(-100);  // Intake out
-        } else {
-            intake.move(0);  // Stop intake
-        }
-
-        // Optional Debugging on LCD
-        char buffer[100];
-        sprintf(buffer, "Forward: %d | Turn: %d", forward, turn);
-        pros::lcd::set_text(1, buffer);
-
-        pros::delay(20);  // Run this loop every 20 milliseconds
-    }
-}
-void opcontrol() {
-   pros::Controller master (E_CONTROLLER_MASTER);
+   pros::Controller master (pros::E_CONTROLLER_MASTER);
    pros::Motor cheesecakejr (11);
    while (true) {
-      cheesecakejr.move(master.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
+      cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
       pros::delay(6);
    }
 }
