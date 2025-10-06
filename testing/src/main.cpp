@@ -79,8 +79,12 @@ void autonomous() {
 void opcontrol() {
    pros::Controller master (pros::E_CONTROLLER_MASTER);
    pros::Motor cheesecakejr (11);
+   pros::Motor dingus (12);
    while (true) {
       cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
       pros::delay(6);
+      dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
+      pros::delay(6);
    }
 }
+
