@@ -87,4 +87,4 @@ void opcontrol() {
       pros::delay(6);
    }
 }
-"Hi"
+//The sole purpose of this line is to be pointless
