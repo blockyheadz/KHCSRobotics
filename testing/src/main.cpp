@@ -80,11 +80,25 @@ void opcontrol() {
    pros::Controller master (pros::E_CONTROLLER_MASTER);
    pros::Motor cheesecakejr (11);
    pros::Motor dingus (12);
+   pros::Motor omar (15);
+   pros::Motor batman (16);
    while (true) {
       cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
       pros::delay(6);
-      dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
+      dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
       pros::delay(6);
-   }
+      if (pros::E_CONTROLLER_DIGITAL_L1){
+        omar.move(127);
+      }
+     else {
+        omar.move(0);
+    }
+    if (pros::E_CONTROLLER_DIGITAL_L2){
+        batman.move(127);
+    }
+    else {
+        batman.move(0);
+    }
+    }
 }
-"Hi"
+
