@@ -83,7 +83,7 @@ void opcontrol() {
    pros::Motor omar (15);
    pros::Motor batman (16);
    while (true) {
-      cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
+      cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
       pros::delay(6);
       dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
       pros::delay(6);
