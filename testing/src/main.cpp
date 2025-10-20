@@ -80,15 +80,11 @@ void opcontrol() {
    pros::Controller master (pros::E_CONTROLLER_MASTER);
    pros::Motor cheesecakejr (11);
    pros::Motor dingus (12);
-   int power = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-   int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
    while (true) {
-      cheesecakejr.move(power + turn);
+      cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
       pros::delay(6);
-      turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-      dingus.move(turn - power);
+      dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
       pros::delay(6);
-      power = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
    }
 }
-//comment to make sure git is working again
+"Hi"
