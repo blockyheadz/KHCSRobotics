@@ -87,18 +87,19 @@ void opcontrol() {
       pros::delay(6);
       dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
       pros::delay(6);
-      if (pros::E_CONTROLLER_DIGITAL_L1){
-        omar.move(127);
-      }
-     else {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+	omar.move(-127);
+	pros::lcd::set_text(1,"I Was Pressed");
+      } else {
         omar.move(0);
-    }
-    if (pros::E_CONTROLLER_DIGITAL_L2){
+	pros::lcd::set_text(1,"Not Pressed");
+      }
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
         batman.move(127);
-    }
-    else {
+      }
+      else {
         batman.move(0);
-    }
+      }
     }
 }
 
