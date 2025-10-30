@@ -78,27 +78,40 @@ void autonomous() {
 
 void opcontrol() {
    pros::Controller master (pros::E_CONTROLLER_MASTER);
-   pros::Motor cheesecakejr (11);
-   pros::Motor dingus (12);
-   pros::Motor omar (15);
-   pros::Motor batman (16);
+   pros::Motor BackLeft (11);
+   pros::Motor BackRight (12);
+   pros::Motor FrontLeft (13);
+   pros::Motor FrontRight (14);
+   pros::Motor IntakeIntake (15);
+   pros::Motor FloorIntake (16);
+   int power;
+   int joystickleft;
    while (true) {
-      cheesecakejr.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+    joystickleft = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    power = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+      BackLeft.move(joystickleft);
       pros::delay(6);
-      dingus.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+      BackRight.move(-1*power);
       pros::delay(6);
-      if (pros::E_CONTROLLER_DIGITAL_L1){
-        omar.move(127);
+      FrontLeft.move(joystickleft);
+      pros::delay(6);
+      FrontRight.move(-1*power);
+      pros::delay(6);
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+        FloorIntake.move(127);
+
       }
      else {
-        omar.move(0);
+        FloorIntake.move(0);
     }
-    if (pros::E_CONTROLLER_DIGITAL_L2){
-        batman.move(127);
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+        IntakeIntake.move(-127);
     }
     else {
-        batman.move(0);
+        IntakeIntake.move(0);
     }
     }
+     
+
 }
 
