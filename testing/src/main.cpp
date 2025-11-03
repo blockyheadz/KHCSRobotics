@@ -97,18 +97,18 @@ void opcontrol() {
       pros::delay(6);
       FrontRight.move(-1*power);
       pros::delay(6);
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-        FloorIntake.move(127);
-
+      if (pros::E_CONTROLLER_DIGITAL_L1){
+        omar.move(127);
       }
      else {
-        FloorIntake.move(0);
+        omar.move(0);
     }
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-        IntakeIntake.move(-127);
+    if (pros::E_CONTROLLER_DIGITAL_L2){
+        batman.move(127);
     }
+    
     else {
-        IntakeIntake.move(0);
+        batman.move(0);
     }
     }
      
