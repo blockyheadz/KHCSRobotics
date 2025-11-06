@@ -86,7 +86,21 @@ void opcontrol() {
    pros::Motor FloorIntake (16);
    int power;
    int joystickleft;
+   bool lowerIntakeOn = false;
+   bool upperIntakeOn = false;
    while (true) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        lowerIntakeOn = true;
+    }
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        lowerIntakeOn = false;
+    }
+    if (lowerIntakeOn) {
+        FloorIntake.move(127);
+    } else {
+        FloorIntake.move(0);
+    }
+
     joystickleft = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     power = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
       BackLeft.move(joystickleft);
@@ -97,20 +111,20 @@ void opcontrol() {
       pros::delay(6);
       FrontRight.move(-1*power);
       pros::delay(6);
-      if (pros::E_CONTROLLER_DIGITAL_L1){
-        omar.move(127);
-      }
-     else {
-        omar.move(0);
-    }
-    if (pros::E_CONTROLLER_DIGITAL_L2){
-        batman.move(127);
-    }
-    
-    else {
-        batman.move(0);
-    }
-    }
+     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        upperIntakeOn = true;
+     }
+     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        upperIntakeOn = false;
+     }
+     if (upperIntakeOn) {
+        FloorIntake.move(127);
+     } else {
+        FloorIntake.move(0);
+     }
+
+     }
+
      
 
 }
