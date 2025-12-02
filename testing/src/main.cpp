@@ -84,10 +84,14 @@ void opcontrol() {
    pros::Motor FrontRight (14);
    pros::Motor IntakeIntake (15);
    pros::Motor FloorIntake (16);
-   int power;
+   
+   int joystickright; 
    int joystickleft;
+   int personalizedValue = 0;
+   bool flagPersonalValuePressed = false;
    bool lowerIntakeOn = false;
    bool upperIntakeOn = false;
+
    while (true) {
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         lowerIntakeOn = true;
@@ -102,14 +106,25 @@ void opcontrol() {
     }
 
     joystickleft = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    power = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-      BackLeft.move(joystickleft);
-      pros::delay(6);
-      BackRight.move(-1*power);
-      pros::delay(6);
-      FrontLeft.move(joystickleft);
-      pros::delay(6);
-      FrontRight.move(-1*power);
+    joystickright = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    
+    //This sets the personal preference of the player
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && !flagPersonalValuePressed) {
+	    personalizedValue = personalizedValue + 1;
+	    flagPersonalValuePressed = true;
+    }
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && !flagPersonalValuePressed && personalizedValue > 0) {
+	    personalizedValue = personalizedValue - 1;
+	    flagPersonalValuePressed = true;
+    }
+
+    if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+	    flagPersonalValuePressed = false;
+    }
+
+       
+
+
       pros::delay(6);
      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
         upperIntakeOn = true;
@@ -119,7 +134,8 @@ void opcontrol() {
      }
      if (upperIntakeOn) {
         FloorIntake.move(127);
-     } else {
+     }
+     else {
         FloorIntake.move(0);
      }
 
@@ -127,5 +143,5 @@ void opcontrol() {
 
      
 
-}
 
+}
