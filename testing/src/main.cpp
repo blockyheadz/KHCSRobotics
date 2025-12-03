@@ -79,15 +79,15 @@ void autonomous() {
 void opcontrol() {
    pros::Controller master (pros::E_CONTROLLER_MASTER);
    pros::Motor BackLeft (11);
-   pros::Motor BackRight (12);
+   pros::Motor BackRight (-12);
    pros::Motor FrontLeft (13);
-   pros::Motor FrontRight (14);
+   pros::Motor FrontRight (-14);
    pros::Motor IntakeIntake (15);
    pros::Motor FloorIntake (16);
    
    int joystickright; 
    int joystickleft;
-   int personalizedValue = 0;
+   int personalizedValue = 127;
    int leftPower = 0;
    int rightPower = 0;
    bool flagPersonalValuePressed = false;
@@ -127,9 +127,10 @@ void opcontrol() {
        // This manages the actual power values
        // When within range for normal operations
     if ( abs(joystickleft) < personalizedValue) {
-	    leftPower = joystickleft + (((127 - joystickleft) / 127 ) * joystickright);
-	    rightPower = joystickleft - (((127 - joystickleft) / 127 ) * joystickright );
+	    rightPower = joystickleft + (((127 - joystickleft) / 127) *joystickright);
+            leftPower = joystickleft - (((127 - joystickleft) / 127) * joystickright);
     } else {
+	    
 	    //This is when the personal preference starts to come in
 	    if ( joystickright > 0) {
 		    leftPower = joystickleft + (((127 - joystickleft) / 127) * joystickright);
@@ -137,7 +138,7 @@ void opcontrol() {
 	    } else {
 
 		    rightPower = joystickleft + (((127 - joystickleft) / 127) *joystickright);
-		    leftPower = joystickleft + (((127 - joystickleft) / 127) * joystickright);
+		    leftPower = joystickleft + (((127 - personalizedValue) / 127) * joystickright);
 	    }
     }
 
