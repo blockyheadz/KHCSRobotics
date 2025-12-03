@@ -88,6 +88,8 @@ void opcontrol() {
    int joystickright; 
    int joystickleft;
    int personalizedValue = 0;
+   int leftPower = 0;
+   int rightPower = 0;
    bool flagPersonalValuePressed = false;
    bool lowerIntakeOn = false;
    bool upperIntakeOn = false;
@@ -109,7 +111,7 @@ void opcontrol() {
     joystickright = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
     
     //This sets the personal preference of the player
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && !flagPersonalValuePressed) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && !flagPersonalValuePressed && personalizedValue < 127) {
 	    personalizedValue = personalizedValue + 1;
 	    flagPersonalValuePressed = true;
     }
@@ -122,8 +124,31 @@ void opcontrol() {
 	    flagPersonalValuePressed = false;
     }
 
-       
+       // This manages the actual power values
+       // When within range for normal operations
+    if ( abs(joystickleft) < personalizedValue) {
+	    leftPower = joystickleft + (((127 - joystickleft) / 127 ) * joystickright);
+	    rightPower = joystickleft - (((127 - joystickleft) / 127 ) * joystickright );
+    } else {
+	    //This is when the personal preference starts to come in
+	    if ( joystickright > 0) {
+		    leftPower = joystickleft + (((127 - joystickleft) / 127) * joystickright);
+		    rightPower = joystickleft + (((127 - personalizedValue) / 127) *joystickright);
+	    } else {
 
+		    rightPower = joystickleft + (((127 - joystickleft) / 127) *joystickright);
+		    leftPower = joystickleft + (((127 - joystickleft) / 127) * joystickright);
+	    }
+    }
+
+    //This is the actual part that moves motors
+    BackLeft.move(leftPower);
+    FrontLeft.move(leftPower);
+
+    BackRight.move(rightPower);
+    FrontRight.move(rightPower);
+	    
+	    
 
       pros::delay(6);
      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
@@ -142,6 +167,5 @@ void opcontrol() {
      }
 
      
-
 
 }
