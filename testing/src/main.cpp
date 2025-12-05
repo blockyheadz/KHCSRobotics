@@ -126,19 +126,20 @@ void opcontrol() {
 
        // This manages the actual power values
        // When within range for normal operations
-    if ( abs(joystickleft) < personalizedValue) {
-	    rightPower = joystickleft + (((127 - joystickleft) / 127) *joystickright);
-            leftPower = joystickleft - (((127 - joystickleft) / 127) * joystickright);
+    if ( true) {
+	    rightPower = joystickleft - (int)(((127.0 - joystickleft) *joystickright) / 127);
+            leftPower = joystickleft + (int)(((127.0 - joystickleft) * joystickright) / 127);
+
     } else {
 	    
 	    //This is when the personal preference starts to come in
 	    if ( joystickright > 0) {
-		    leftPower = joystickleft + (((127 - joystickleft) / 127) * joystickright);
-		    rightPower = joystickleft + (((127 - personalizedValue) / 127) *joystickright);
+		    leftPower = joystickleft + (int)(((127 - joystickleft) / 127) * joystickright);
+		    rightPower = joystickleft - (int)(((127 - personalizedValue) / 127) *joystickright);
 	    } else {
 
-		    rightPower = joystickleft + (((127 - joystickleft) / 127) *joystickright);
-		    leftPower = joystickleft + (((127 - personalizedValue) / 127) * joystickright);
+		    rightPower = joystickleft - (int)(((127 - joystickleft) / 127) *joystickright);
+		    leftPower = joystickleft + (int)(((127 - personalizedValue) / 127) * joystickright);
 	    }
     }
 
@@ -148,6 +149,10 @@ void opcontrol() {
 
     BackRight.move(rightPower);
     FrontRight.move(rightPower);
+    char value[] = "help please";
+
+    sprintf(value,"%i   %b",personalizedValue, joystickleft < personalizedValue);
+    pros::lcd::set_text(1,value);
 	    
 	    
 
