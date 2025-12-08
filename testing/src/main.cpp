@@ -126,9 +126,9 @@ void opcontrol() {
 
        // This manages the actual power values
        // When within range for normal operations
-    if ( true) {
-	    rightPower = joystickleft - (int)(((127.0 - joystickleft) *joystickright) / 127);
-            leftPower = joystickleft + (int)(((127.0 - joystickleft) * joystickright) / 127);
+    if ( abs(joystickleft) > personalizedValue) {
+	    rightPower = joystickleft - (int)(((127.0 - abs(joystickleft)) *joystickright) / 127);
+            leftPower = joystickleft + (int)(((127.0 - abs(joystickleft)) * joystickright) / 127);
 
     } else {
 	    
