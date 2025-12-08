@@ -126,22 +126,9 @@ void opcontrol() {
 
        // This manages the actual power values
        // When within range for normal operations
-    if ( abs(joystickleft) > personalizedValue) {
-	    rightPower = joystickleft - (int)(((127.0 - abs(joystickleft)) *joystickright) / 127);
-            leftPower = joystickleft + (int)(((127.0 - abs(joystickleft)) * joystickright) / 127);
+    rightPower = (int)(((127.0 - abs(joystickright)) * joystickleft) / 127) - joystickright;
+    leftPower = (int)(((127.0 - abs(joystickright)) * joystickleft) / 127) + joystickright;
 
-    } else {
-	    
-	    //This is when the personal preference starts to come in
-	    if ( joystickright > 0) {
-		    leftPower = joystickleft + (int)(((127 - joystickleft) / 127) * joystickright);
-		    rightPower = joystickleft - (int)(((127 - personalizedValue) / 127) *joystickright);
-	    } else {
-
-		    rightPower = joystickleft - (int)(((127 - joystickleft) / 127) *joystickright);
-		    leftPower = joystickleft + (int)(((127 - personalizedValue) / 127) * joystickright);
-	    }
-    }
 
     //This is the actual part that moves motors
     BackLeft.move(leftPower);
