@@ -162,3 +162,10 @@ void opcontrol() {
    pros::delay(10); 
 
 }
+
+
+float inchtotick (float input) {
+    int tick = 900; // 900 ticks per rev
+    float inch = 12.60; // inch per revolution
+    return ( tick/inch * input);
+}
