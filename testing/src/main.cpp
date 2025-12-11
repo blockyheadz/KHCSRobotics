@@ -77,6 +77,7 @@ void autonomous() {
 // Teleoperated (Manual) Control
 
 void opcontrol() {
+   pros::lcd::initialize();
    pros::Controller master (pros::E_CONTROLLER_MASTER);
    pros::Motor BackLeft (11);
    pros::Motor BackRight (-12);
@@ -139,11 +140,9 @@ void opcontrol() {
     char value[] = "help please";
 
     sprintf(value,"%i   %b",personalizedValue, joystickleft < personalizedValue);
-    pros::lcd::set_text(1,value);
 	    
 	    
 
-      pros::delay(6);
      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
         upperIntakeOn = true;
      }
@@ -151,15 +150,15 @@ void opcontrol() {
         upperIntakeOn = false;
      }
      if (upperIntakeOn) {
-        FloorIntake.move(127);
+        IntakeIntake.move(127);
 	pros::lcd::set_text(1,"it should be spinning");
      }
      else {
-        FloorIntake.move(0);
+        IntakeIntake.move(0);
      }
 
      }
 
-     
+   pros::delay(10); 
 
 }
