@@ -152,6 +152,7 @@ void opcontrol() {
      }
      if (upperIntakeOn) {
         FloorIntake.move(127);
+	pros::lcd::set_text(1,"it should be spinning");
      }
      else {
         FloorIntake.move(0);
