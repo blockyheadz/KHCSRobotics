@@ -84,7 +84,7 @@ void opcontrol() {
    pros::Motor FrontLeft (13);
    pros::Motor FrontRight (-14);
    pros::Motor IntakeIntake (15);
-   pros::Motor FloorIntake (16);
+   pros::Motor FloorIntake (-16);
    
    int joystickright; 
    int joystickleft;
