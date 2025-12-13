@@ -8,7 +8,7 @@ pros::Motor BackLeft (11);
 pros::Motor BackRight (-12);
 pros::Motor FrontLeft (13);
 pros::Motor FrontRight (-14);
-pros::Motor IntakeIntake (15);
+pros::Motor IntakeIntake (-15);
 pros::Motor FloorIntake (-16);
 
 // Mobile goal pneumatic system (updated with non-deprecated type)
@@ -25,7 +25,7 @@ float inchToTick (float input) {
 
 int rotateByDegree(int input) {
     int CHANGE_THIS_LATER = 1;
-    return input * (10000 / CHANGE_THIS_LATER);
+    return input * (500 / CHANGE_THIS_LATER);
 }
 
 void resetMotor() {
@@ -62,6 +62,7 @@ void competition_initialize() {}
 
 // Autonomous Mode
 void autonomous() {
+	/*
     int speed = 100;    // Speed for autonomous movement
     int distance = inchToTick(34);  // Arbitrary tick value for distance
     
@@ -120,6 +121,7 @@ void autonomous() {
     FloorIntake.move_absolute(inchToTick(20), speed);
     IntakeIntake.move_absolute(inchToTick(30), speed);
     pros::delay(3000);
+    */
 }
 //pls no break
 
@@ -130,7 +132,7 @@ void opcontrol() {
    pros::Motor BackRight (-12);
    pros::Motor FrontLeft (13);
    pros::Motor FrontRight (-14);
-   pros::Motor IntakeIntake (15);
+   pros::Motor IntakeIntake (-15);
    pros::Motor FloorIntake (-16);
    
    int joystickright; 
@@ -145,15 +147,16 @@ void opcontrol() {
 
   int speed = 100;
   int distance = rotateByDegree(360);
+  /**
     while (FrontRight.get_position() < distance) {
 	    FrontLeft.move_absolute(distance, speed);
-	    FrontRight.move_absolute(distance, speed);
+	    FrontRight.move_absolute(-1 * distance, speed);
 	    BackLeft.move_absolute(distance, speed);
-	    BackRight.move_absolute(distance, speed);
+	    BackRight.move_absolute(-1 * distance, speed);
 	    pros::delay(6);
     }
 
-
+*/
    while (true) {
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         lowerIntakeOn = true;
