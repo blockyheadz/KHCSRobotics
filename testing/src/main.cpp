@@ -4,16 +4,37 @@
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 // Drivetrain motors
-pros::Motor frontLeft(1);
-pros::Motor middleLeft(2);
-pros::Motor backLeft(3);
-pros::Motor frontRight(4);
-pros::Motor middleRight(5);
-pros::Motor backRight(6);
-pros::Motor intake(7);
+pros::Motor BackLeft (11);
+pros::Motor BackRight (-12);
+pros::Motor FrontLeft (13);
+pros::Motor FrontRight (-14);
+pros::Motor IntakeIntake (15);
+pros::Motor FloorIntake (-16);
 
 // Mobile goal pneumatic system (updated with non-deprecated type)
 pros::adi::DigitalOut mobileGoal('A');  // Fixed syntax error
+
+
+
+
+float inchToTick (float input) {
+    int tick = 900; // 900 ticks per rev
+    float inch = 12.60; // inch per revolution
+    return ( tick/inch * input);
+}
+
+int rotateByDegree(int input) {
+    int CHANGE_THIS_LATER = 1;
+    return input * (10000 / CHANGE_THIS_LATER);
+}
+
+void resetMotor() {
+	FrontLeft.tare_position();
+	BackLeft.tare_position();
+	FrontRight.tare_position();
+	BackRight.tare_position();
+}
+
 
 // Center button callback for LCD display
 void on_center_button() {
@@ -42,39 +63,65 @@ void competition_initialize() {}
 // Autonomous Mode
 void autonomous() {
     int speed = 100;    // Speed for autonomous movement
-    int distance = 1000;  // Arbitrary tick value for distance
+    int distance = inchToTick(34);  // Arbitrary tick value for distance
+    
+    while (FrontLeft.get_position() <  distance) {
+	    FrontLeft.move_absolute(distance, speed);
+	    FrontRight.move_absolute(distance, speed);
+	    BackLeft.move_absolute(distance, speed);
+	    BackRight.move_absolute(distance, speed);
+	    pros::delay(10);
+    }    
 
-    // Move forward
-    frontLeft.move_relative(distance, speed);
-    middleLeft.move_relative(distance, speed);
-    backLeft.move_relative(distance, speed);
+    resetMotor();
 
-    frontRight.move_relative(distance, speed);
-    middleRight.move_relative(distance, speed);
-    backRight.move_relative(distance, speed);
 
+    distance = rotateByDegree(90);
+
+    while (FrontRight.get_position() < distance) {
+	    FrontLeft.move_absolute(-distance, speed);
+	    FrontRight.move_absolute(distance, speed);
+	    BackLeft.move_absolute(-distance, speed);
+	    BackRight.move_absolute(distance, speed);
+	    pros::delay(10);
+    }
+
+
+    resetMotor();
+
+    distance = inchToTick(18);
+
+    while (FrontRight.get_position() < distance) {
+	    FrontLeft.move_absolute(distance, speed);
+	    FrontRight.move_absolute(distance, speed);
+	    BackLeft.move_absolute(distance, speed);
+	    BackRight.move_absolute(distance, speed);
+	    pros::delay(6);
+    }
+
+
+    resetMotor();
+
+    IntakeIntake.move_absolute(inchToTick(10), speed);
+    FloorIntake.move_absolute(inchToTick(10), speed);
     // Wait until motors finish moving
-    while (fabs(frontLeft.get_position()) < distance) {
-        pros::delay(20);
-    }
-
-    // Turn in place
-    int turnTicks = 500;  // Arbitrary tick value for turning
-    frontLeft.move_relative(-turnTicks, speed);
-    middleLeft.move_relative(-turnTicks, speed);
-    backLeft.move_relative(-turnTicks, speed);
-
-    frontRight.move_relative(turnTicks, speed);
-    middleRight.move_relative(turnTicks, speed);
-    backRight.move_relative(turnTicks, speed);
-
+    distance = -1 * inchToTick(39);
     // Wait until the turn is complete
-    while (fabs(frontLeft.get_position()) < turnTicks) {
-        pros::delay(20);
-    }
-}
 
-// Teleoperated (Manual) Control
+    while (FrontLeft.get_position() < distance) {
+	    FrontLeft.move_absolute(distance, speed);
+	    FrontRight.move_absolute(distance, speed);
+	    BackLeft.move_absolute(distance, speed);
+	    BackRight.move_absolute(distance, speed);
+	    pros::delay(6);
+    }
+
+
+    FloorIntake.move_absolute(inchToTick(20), speed);
+    IntakeIntake.move_absolute(inchToTick(30), speed);
+    pros::delay(3000);
+}
+//pls no break
 
 void opcontrol() {
    pros::lcd::initialize();
@@ -94,6 +141,18 @@ void opcontrol() {
    bool flagPersonalValuePressed = false;
    bool lowerIntakeOn = false;
    bool upperIntakeOn = false;
+
+
+  int speed = 100;
+  int distance = rotateByDegree(360);
+    while (FrontRight.get_position() < distance) {
+	    FrontLeft.move_absolute(distance, speed);
+	    FrontRight.move_absolute(distance, speed);
+	    BackLeft.move_absolute(distance, speed);
+	    BackRight.move_absolute(distance, speed);
+	    pros::delay(6);
+    }
+
 
    while (true) {
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
@@ -163,9 +222,3 @@ void opcontrol() {
 
 }
 
-
-float inchtotick (float input) {
-    int tick = 900; // 900 ticks per rev
-    float inch = 12.60; // inch per revolution
-    return ( tick/inch * input);
-}
